@@ -2,64 +2,87 @@ import random
 
 
 class DataSimulator:
-    def __init__(self):
-        self.angulo = 30.0
-        self.velocidad = 20.0
-        self.corriente = 0.8
-        self.torque = 1.2
-        self.temperatura = 32.0
 
-        self.desgaste = 0.0100
-        self.vida_util = 90.0
+    def __init__(self):
+
+        self.joints = {}
+
+        for joint in range(1, 7):
+
+            self.joints[joint] = {
+                "angulo": random.uniform(20, 80),
+                "velocidad": random.uniform(10, 50),
+                "corriente": random.uniform(0.4, 1.2),
+                "torque": random.uniform(0.5, 2.0),
+                "temperatura": random.uniform(28, 35),
+
+                # Provisionales
+                "vibracion": random.uniform(0.05, 0.20),
+                "errorPosicion": random.uniform(0, 1.0),
+                "ciclos": 0,
+                "tiempoOperacion": 0.0
+            }
+
 
     def update(self):
-        # Movimiento suave del ángulo
-        self.angulo += random.uniform(-2.0, 2.0)
 
-        if self.angulo < 0:
-            self.angulo = 0
+        for joint in self.joints.values():
 
-        if self.angulo > 180:
-            self.angulo = 180
+            # Ángulo
+            joint["angulo"] += random.uniform(-2, 2)
 
-        # Velocidad
-        self.velocidad += random.uniform(-1.5, 1.5)
-        self.velocidad = max(0, self.velocidad)
+            joint["angulo"] = max(
+                0,
+                min(joint["angulo"], 180)
+            )
 
-        # Corriente
-        self.corriente += random.uniform(-0.05, 0.05)
-        self.corriente = max(0, self.corriente)
+            # Velocidad
+            joint["velocidad"] += random.uniform(-10, 10)
 
-        # Torque
-        self.torque += random.uniform(-0.08, 0.08)
-        self.torque = max(0, self.torque)
+            joint["velocidad"] = max(
+                0,
+                min(joint["velocidad"], 180)
+            )
 
-        # Temperatura
-        self.temperatura += random.uniform(-0.2, 0.3)
+            # Corriente
+            joint["corriente"] += random.uniform(-0.05, 0.05)
 
-        # Simulación de desgaste acumulativo
-        self.desgaste += random.uniform(
-            0.00001,
-            0.00005
-        )
+            joint["corriente"] = max(
+                0,
+                joint["corriente"]
+            )
 
-        # Vida útil simulada
-        self.vida_util -= random.uniform(
-            0.001,
-            0.005
-        )
+            # Torque
+            joint["torque"] += random.uniform(-0.08, 0.08)
 
-        self.vida_util = max(
-            0,
-            self.vida_util
-        )
+            joint["torque"] = max(
+                0,
+                joint["torque"]
+            )
 
-        return {
-            "angulo": self.angulo,
-            "velocidad": self.velocidad,
-            "corriente": self.corriente,
-            "torque": self.torque,
-            "temperatura": self.temperatura,
-            "desgaste": self.desgaste,
-            "vida_util": self.vida_util
-        }
+            # Temperatura
+            joint["temperatura"] += random.uniform(-0.2, 0.3)
+
+            # Vibración simulada
+            joint["vibracion"] += random.uniform(-0.02, 0.02)
+
+            joint["vibracion"] = max(
+                0,
+                joint["vibracion"]
+            )
+
+            # Error de posición
+            joint["errorPosicion"] += random.uniform(-0.1, 0.1)
+
+            joint["errorPosicion"] = max(
+                0,
+                joint["errorPosicion"]
+            )
+
+            # Ciclos provisionales
+            joint["ciclos"] += 1
+
+            # Nuestro timer corre cada 0.5 s
+            joint["tiempoOperacion"] += 0.5
+
+        return self.joints

@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt
 
 from ui.sidebar import Sidebar
 from ui.chequeo import ChequeoWidget
+from ui.configuracionRobot.configuracionRobotPage import configuracionRobotPage
 
 
 class MainWindow(QMainWindow):
@@ -18,90 +19,189 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("HMI de Diagnóstico para Cobots")
+        self.setWindowTitle(
+            "HMI de Diagnóstico para Cobots"
+        )
 
-        self.resize(1500,900)
+        self.resize(
+            1500,
+            900
+        )
 
-        self.setup_ui()
+        self.setupUi()
+        self.connectNavigation()
 
-    def setup_ui(self):
 
-        # =========================
+    def setupUi(self):
+
+        # =====================================
         # CONTENEDOR PRINCIPAL
-        # =========================
+        # =====================================
 
-        central_widget = QWidget()
+        centralWidget = QWidget()
 
-        central_widget.setObjectName("centralContainer")
+        centralWidget.setObjectName(
+            "centralContainer"
+        )
 
-        self.setCentralWidget(central_widget)
+        self.setCentralWidget(
+            centralWidget
+        )
 
-        main_layout = QHBoxLayout(central_widget)
+        mainLayout = QHBoxLayout(
+            centralWidget
+        )
 
-        main_layout.setContentsMargins(0, 0, 0, 0)
+        mainLayout.setContentsMargins(
+            0, 0, 0, 0
+        )
 
-        main_layout.setSpacing(0)
+        mainLayout.setSpacing(0)
 
-        # =========================
-        # MENÚ LATERAL
-        # =========================
+
+        # =====================================
+        # SIDEBAR IZQUIERDO
+        # =====================================
 
         self.sidebar = Sidebar()
 
-        main_layout.addWidget(
-        self.sidebar
+        mainLayout.addWidget(
+            self.sidebar
         )
 
-        # =========================
-        # CONTENIDO DERECHO
-        # =========================
 
-        content_container = QWidget()
+        # =====================================
+        # ZONA DERECHA
+        # =====================================
 
-        content_layout = QVBoxLayout(
-        content_container
+        contentContainer = QWidget()
+
+        contentContainer.setObjectName(
+            "contentContainer"
         )
 
-        content_layout.setContentsMargins(
-        0, 0, 0, 0
+        contentLayout = QVBoxLayout(
+            contentContainer
         )
 
-        content_layout.setSpacing(0)
+        contentLayout.setContentsMargins(
+            0, 0, 0, 0
+        )
 
-        # =========================
-        # ENCABEZADO SUPERIOR
-        # =========================
+        contentLayout.setSpacing(0)
+
+
+        # =====================================
+        # TÍTULO SUPERIOR
+        # =====================================
 
         header = QWidget()
 
-        header.setObjectName("header")
+        header.setObjectName(
+            "header"
+        )
 
-        header_layout = QVBoxLayout(header)
+        headerLayout = QVBoxLayout(
+            header
+        )
 
-        header_layout.setContentsMargins(0, 12, 0, 8)
+        headerLayout.setContentsMargins(
+            0, 12, 0, 8
+        )
 
-        self.screen_title = QLabel("Chequeo / Diagnóstico")
+        self.screen_title = QLabel(
+            "Chequeo / Diagnóstico"
+        )
 
-        self.screen_title.setObjectName("screenTitle")
+        self.screen_title.setObjectName(
+            "screenTitle"
+        )
 
-        self.screen_title.setAlignment(Qt.AlignCenter)
+        self.screen_title.setAlignment(
+            Qt.AlignCenter
+        )
 
-        header_layout.addWidget(self.screen_title)
+        headerLayout.addWidget(
+            self.screen_title
+        )
 
-        content_layout.addWidget(header)
+        contentLayout.addWidget(
+            header
+        )
 
-        # =========================
+
+        # =====================================
         # PÁGINAS
-        # =========================
+        # =====================================
 
         self.pages = QStackedWidget()
 
-        self.pages.setObjectName("pages")
+        self.pages.setObjectName(
+            "pages"
+        )
 
-        self.chequeo_page = ChequeoWidget()
+        self.chequeoPage = ChequeoWidget()
 
-        self.pages.addWidget(self.chequeo_page)
+        self.configuracionRobotPage = (
+            configuracionRobotPage()
+        )
 
-        content_layout.addWidget(self.pages)
+        self.pages.addWidget(
+            self.chequeoPage
+        )
 
-        main_layout.addWidget(content_container)
+        self.pages.addWidget(
+            self.configuracionRobotPage
+        )
+
+        self.pages.setCurrentIndex(0)
+
+        contentLayout.addWidget(
+            self.pages
+        )
+
+
+        # =====================================
+        # IMPORTANTE:
+        # AGREGAR LA ZONA DERECHA
+        # =====================================
+
+        mainLayout.addWidget(
+            contentContainer
+        )
+
+
+    # =========================================
+    # NAVEGACIÓN
+    # =========================================
+
+    def connectNavigation(self):
+
+        self.sidebar.btn_chequeo.clicked.connect(
+            lambda: self.changePage(
+                0,
+                "Chequeo / Diagnóstico"
+            )
+        )
+
+        self.sidebar.btn_pestana2.clicked.connect(
+            lambda: self.changePage(
+                1,
+                "Configuración del robot"
+            )
+        )
+
+
+    def changePage(
+        self,
+        index,
+        title
+    ):
+
+        self.pages.setCurrentIndex(
+            index
+        )
+
+        self.screen_title.setText(
+            title
+        )

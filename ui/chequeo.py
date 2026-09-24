@@ -1,10 +1,9 @@
 from PySide6.QtWidgets import (
     QWidget,
-    QVBoxLayout,
-    QLabel
+    QVBoxLayout
 )
 
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import QTimer
 
 from ui.diagnosticSwitch import DiagnosticSwitch
 from data.simulator import DataSimulator
@@ -15,14 +14,6 @@ class ChequeoWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        # Fondo blanco explícito
-        self.setStyleSheet("""
-            QWidget {
-                background-color: white;
-                color: black;
-            }
-        """)
-
         layout = QVBoxLayout(self)
 
         layout.setContentsMargins(
@@ -31,12 +22,12 @@ class ChequeoWidget(QWidget):
 
         layout.setSpacing(10)
 
-       
-        # Panel Variables / Resultados
-        self.diagnostic_switch = DiagnosticSwitch()
+        self.diagnosticSwitch = (
+            DiagnosticSwitch()
+        )
 
         layout.addWidget(
-            self.diagnostic_switch
+            self.diagnosticSwitch
         )
 
         # Simulador
@@ -46,20 +37,22 @@ class ChequeoWidget(QWidget):
         self.timer = QTimer(self)
 
         self.timer.timeout.connect(
-            self.update_simulation
+            self.updateSimulation
         )
 
-        # Ejecutamos una vez inmediatamente
-        self.update_simulation()
+        # Primer valor inmediato
+        self.updateSimulation()
 
-        # Después actualizamos cada 500 ms
-        self.timer.start(500)
+        # 500 ms
+        self.timer.start(
+            500
+        )
 
 
-    def update_simulation(self):
+    def updateSimulation(self):
 
         data = self.simulator.update()
 
-        self.diagnostic_switch.update_data(
+        self.diagnosticSwitch.updateData(
             data
         )
